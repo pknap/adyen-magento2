@@ -60,7 +60,8 @@ define(
             'scheme',
             'boleto',
             'wechatpay',
-            'paywithgoogle'];
+            'paywithgoogle',
+            'ratepay'];
         var popupModal;
         var brandCode = ko.observable(null);
         var paymentMethod = ko.observable(null);
@@ -104,6 +105,7 @@ define(
                             hasHolderName: true,
                             locale: adyenConfiguration.getLocale(),
                             originKey: adyenConfiguration.getOriginKey(),
+                            clientKey: 'test_U66NUAFVW5D7BCET73LZ25EHJQWO3YH2',
                             environment: adyenConfiguration.getCheckoutEnvironment(),
                             paymentMethodsResponse: paymentMethodsResponse.paymentMethodsResponse,
                             onAdditionalDetails: this.handleOnAdditionalDetails.bind(
@@ -254,8 +256,8 @@ define(
                             var showPayButton = false;
                             const showPayButtonPaymentMethods = [
                                 'paypal',
-                                'applePay',
-                                'googlePay'
+                                'applepay',
+                                'paywithgoogle'
                             ];
 
                             if (showPayButtonPaymentMethods.includes(
@@ -318,7 +320,11 @@ define(
                                 showPayButton: showPayButton,
                                 countryCode: country,
                                 currencyCode: quote.totals().quote_currency_code,
-                                amount: quote.totals().grand_total, //TODO minor units and PW-2029 adjustment
+                                totalPrice: 600,
+                                amount: { // Use this after above removed
+                                    value: 600,
+                                    currency: quote.totals().quote_currency_code,
+                                },
                                 data: {
                                     personalDetails: {
                                         firstName: firstName,
@@ -341,15 +347,41 @@ define(
                                 }
                             });
 
+                            console.log(configuration);
+
                             try {
-                                result.component = self.checkoutComponent.create(
-                                    result.getBrandCode(), configuration).
-                                    mount(
-                                        '#adyen-alternative-payment-container-' +
-                                        result.getBrandCode());
+                                const component = self.checkoutComponent.create(paymentMethod.type, configuration);
+                                const containerId = '#adyen-alternative-payment-container-' + paymentMethod.type;
+
+                                if ('isAvailable' in component) {
+                                    component.isAvailable().then(() => {
+                                        component.mount(containerId);
+
+                                        /*if (componentButtonPaymentMethods.includes(
+                                            paymentMethod.type)) {
+
+                                            // Configure to only listen to attribute changes
+                                            let config = {attributes: true};
+                                            // Start observing prestaShopPlaceOrderButtonDisabledObserver
+                                            if (!IS_PRESTA_SHOP_16) {
+                                                prestaShopPlaceOrderButtonDisabledObserver.observe(
+                                                    prestaShopPlaceOrderButton.get(0),
+                                                    config);
+                                            }
+                                        }*/
+                                    }).catch(e => {
+                                        console.log(e);
+                                        console.log(paymentMethod.type + ' is not available');
+                                    });
+                                } else {
+                                    component.mount(containerId);
+                                }
+
+                                result.component = component;
+
                             } catch (err) {
-                                console.log(err);
                                 // The component does not exist yet
+                                console.log(err);
                             }
                         };
                         // TODO do the same way as the card payments
