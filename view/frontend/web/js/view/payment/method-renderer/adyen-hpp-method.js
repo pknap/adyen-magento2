@@ -60,10 +60,9 @@ define(
             'scheme',
             'boleto',
             'wechatpay',
-            'paywithgoogle',
             'ratepay'];
         var popupModal;
-        var brandCode = ko.observable(null);
+        var selectedAlternativePaymentMethodType = ko.observable(null);
         var paymentMethod = ko.observable(null);
 
         return Component.extend({
@@ -75,7 +74,7 @@ define(
             },
             initObservable: function() {
                 this._super().observe([
-                    'brandCode',
+                    'selectedAlternativePaymentMethodType',
                     'paymentMethod',
                     'adyenPaymentMethods'
                 ]);
@@ -98,7 +97,7 @@ define(
             loadAdyenPaymentMethods: function(paymentMethodsResponse) {
                 var self = this;
 
-                if (!!paymentMethodsResponse) {
+                if (!!paymentMethodsResponse.paymentMethodsResponse) {
                     var paymentMethods = paymentMethodsResponse.paymentMethodsResponse.paymentMethods;
 
                     this.checkoutComponent = new AdyenCheckout({
@@ -110,6 +109,7 @@ define(
                             paymentMethodsResponse: paymentMethodsResponse.paymentMethodsResponse,
                             onAdditionalDetails: this.handleOnAdditionalDetails.bind(
                                 this),
+                            onSubmit: this.handleOnSubmit.bind(this),
                         },
                     );
 
@@ -141,7 +141,14 @@ define(
             getAdyenHppPaymentMethods: function(paymentMethodsResponse) {
                 var self = this;
 
+                const showPayButtonPaymentMethods = [
+                    'paypal',
+                    'applepay',
+                    'paywithgoogle'
+                ];
+
                 var paymentMethods = paymentMethodsResponse.paymentMethodsResponse.paymentMethods;
+                var paymentMethodsExtraInfo = paymentMethodsResponse.paymentMethodsExtraDetails;
 
                 var paymentList = _.reduce(paymentMethods,
                     function(accumulator, paymentMethod) {
@@ -152,8 +159,7 @@ define(
                         }
 
                         var messageContainer = new Messages();
-                        var name = 'messages-' +
-                            self.getBrandCodeFromPaymentMethod(paymentMethod);
+                        var name = 'messages-' + paymentMethod.type;
                         var messagesComponent = {
                             parent: self.name,
                             name: name,
@@ -167,18 +173,12 @@ define(
 
                         var result = {};
 
-                        /**
-                         * Returns the payment method's brand code (in checkout api it is the type)
-                         * @returns {*}
-                         */
-                        result.getBrandCode = function() {
-                            return self.getBrandCodeFromPaymentMethod(
-                                paymentMethod);
-                        };
+                        result.paymentMethod = paymentMethod;
+                        result.icon = {};
 
-                        result.brandCode = result.getBrandCode();
-                        result.name = paymentMethod.name;
-                        result.icon = {}; // TODO get icon details
+                        if (!!paymentMethodsExtraInfo[paymentMethod.type]) {
+                            result.icon = paymentMethodsExtraInfo[paymentMethod.type].icon;
+                        }
 
                         result.method = self.item.method;
                         /**
@@ -187,48 +187,15 @@ define(
                          * @type {observable}
                          */
                         result.placeOrderAllowed = ko.observable(true);
-                        result.getCode = function() {
-                            return self.item.method;
-                        };
+
                         result.getMessageName = function() {
-                            return 'messages-' +
-                                self.getBrandCodeFromPaymentMethod(
-                                    paymentMethod);
+                            return 'messages-' + paymentMethod.type;
                         };
                         result.getMessageContainer = function() {
                             return messageContainer;
                         };
                         result.validate = function() {
-                            return self.validate(result.getBrandCode());
-                        };
-                        result.placeRedirectOrder = function placeRedirectOrder(data) {
-
-                            // Place Order but use our own redirect url after
-                            fullScreenLoader.startLoader();
-                            $('.hpp-message').slideUp();
-                            self.isPlaceOrderActionAllowed(false);
-
-                            $.when(
-                                placeOrderAction(data,
-                                    self.currentMessageContainer),
-                            ).fail(
-                                function(response) {
-                                    self.isPlaceOrderActionAllowed(true);
-                                    fullScreenLoader.stopLoader();
-                                    self.showErrorMessage(response);
-                                },
-                            ).done(
-                                function(orderId) {
-                                    self.afterPlaceOrder();
-                                    adyenPaymentService.getOrderPaymentStatus(
-                                        orderId).
-                                        done(function(responseJSON) {
-                                            self.validateActionOrPlaceOrder(
-                                                responseJSON,
-                                                orderId);
-                                        });
-                                },
-                            );
+                            return self.validate(paymentMethod.type);
                         };
 
                         /**
@@ -238,13 +205,21 @@ define(
                          * @returns {*}
                          */
                         result.isPlaceOrderAllowed = function(bool) {
-                            self.isPlaceOrderActionAllowed(bool);
+                            //self.isPlaceOrderActionAllowed(bool);
                             return result.placeOrderAllowed(bool);
                         };
                         result.afterPlaceOrder = function() {
                             return self.afterPlaceOrder();
                         };
 
+                        result.showPlaceOrderButton = function() {
+                            if (showPayButtonPaymentMethods.includes(
+                                paymentMethod.type)) {
+                                return false;
+                            }
+
+                            return true;
+                        };
                         /**
                          * Renders the secure fields,
                          * creates the ideal component,
@@ -254,11 +229,6 @@ define(
                             result.isPlaceOrderAllowed(false);
 
                             var showPayButton = false;
-                            const showPayButtonPaymentMethods = [
-                                'paypal',
-                                'applepay',
-                                'paywithgoogle'
-                            ];
 
                             if (showPayButtonPaymentMethods.includes(
                                 paymentMethod.type)) {
@@ -325,6 +295,7 @@ define(
                                     value: 600,
                                     currency: quote.totals().quote_currency_code,
                                 },
+                                totalPriceLabel: 'test',
                                 data: {
                                     personalDetails: {
                                         firstName: firstName,
@@ -344,10 +315,17 @@ define(
                                 },
                                 onChange: function(state) {
                                     result.isPlaceOrderAllowed(state.isValid);
+                                },
+                                onClick: (resolve, reject) => {
+                                    console.log('onClick triggered A');
+                                    resolve();
                                 }
                             });
 
-                            console.log(configuration);
+                            /*if (paymentMethod.type === 'applepay') {
+                                configuration.onClick = function(resolve, reject) { resolve();
+                                };
+                            }*/
 
                             try {
                                 const component = self.checkoutComponent.create(paymentMethod.type, configuration);
@@ -384,42 +362,6 @@ define(
                                 console.log(err);
                             }
                         };
-                        // TODO do the same way as the card payments
-                        result.continueToAdyenBrandCode = function() {
-                            // set payment method to adyen_hpp
-                            var self = this;
-
-                            if (this.validate() &&
-                                additionalValidators.validate()) {
-                                var data = {};
-                                data.method = self.method;
-
-                                var additionalData = {};
-                                additionalData.brand_code = self.brandCode;
-
-                                let stateData;
-                                if ('component' in self) {
-                                    stateData = self.component.data;
-                                } else {
-                                    stateData = {
-                                        paymentMethod: {
-                                            type: self.brandCode
-                                        }
-                                    };
-                                }
-
-                                additionalData.stateData = JSON.stringify(stateData);
-
-                                if (brandCode() == 'ratepay') {
-                                    additionalData.df_value = this.getRatePayDeviceIdentToken();
-                                }
-
-                                data.additional_data = additionalData;
-                                this.placeRedirectOrder(data);
-                            }
-
-                            return false;
-                        };
 
                         result.getRatePayDeviceIdentToken = function() {
                             return window.checkoutConfig.payment.adyenHpp.deviceIdentToken;
@@ -430,6 +372,39 @@ define(
                     }, []);
 
                 return paymentList;
+            },
+            placeOrder: function() {
+
+            },
+            placeRedirectOrder: function placeRedirectOrder(data) {
+                var self = this;
+
+                // Place Order but use our own redirect url after
+                fullScreenLoader.startLoader();
+                $('.hpp-message').slideUp();
+                //self.isPlaceOrderActionAllowed(false);
+
+                $.when(
+                    placeOrderAction(data,
+                        self.currentMessageContainer),
+                ).fail(
+                    function(response) {
+                        //self.isPlaceOrderActionAllowed(true);
+                        fullScreenLoader.stopLoader();
+                        self.showErrorMessage(response);
+                    },
+                ).done(
+                    function(orderId) {
+                        self.afterPlaceOrder();
+                        adyenPaymentService.getOrderPaymentStatus(
+                            orderId).
+                            done(function(responseJSON) {
+                                self.validateActionOrPlaceOrder(
+                                    responseJSON,
+                                    orderId);
+                            });
+                    },
+                );
             },
             /**
              * Some payment methods we do not want to render as it requires extra implementation
@@ -451,7 +426,7 @@ define(
                 }
                 return true;
             },
-            selectPaymentMethodBrandCode: function() {
+            selectPaymentMethodType: function() {
                 var self = this;
 
                 // set payment method to adyen_hpp
@@ -459,12 +434,12 @@ define(
                     'method': self.method,
                     'po_number': null,
                     'additional_data': {
-                        brand_code: self.brandCode,
+                        brand_code: self.paymentMethod.type,
                     },
                 };
 
-                // set the brandCode
-                brandCode(self.brandCode);
+                // set the payment method type
+                selectedAlternativePaymentMethodType(self.paymentMethod.type);
 
                 // set payment method
                 paymentMethod(self.method);
@@ -489,14 +464,14 @@ define(
                     '<div id="ActionContainer"></div>' +
                     '</div>');
             },
-            isBrandCodeChecked: ko.computed(function() {
+            getSelectedAlternativePaymentMethodType: ko.computed(function() {
 
                 if (!quote.paymentMethod()) {
                     return null;
                 }
 
                 if (quote.paymentMethod().method == paymentMethod()) {
-                    return brandCode();
+                    return selectedAlternativePaymentMethodType();
                 }
                 return null;
             }),
@@ -543,6 +518,49 @@ define(
                 self.actionComponent = self.checkoutComponent.createFromAction(
                     action).mount(actionNode);
             },
+            handleOnSubmit: function(state, component) {
+                // set payment method to adyen_hpp
+                var self = this;
+
+                console.log(state);
+                console.log(component);
+                console.log(selectedAlternativePaymentMethodType());
+
+                if (this.validate() &&
+                    additionalValidators.validate()) {
+                    console.log('test');
+                    var data = {};
+                    data.method = self.method;
+
+                    var additionalData = {};
+                    additionalData.brand_code = selectedAlternativePaymentMethodType();
+
+                    let stateData;
+                    if ('component' in self) {
+                        stateData = component.data;
+                    } else {
+                        stateData = {
+                            paymentMethod: {
+                                type: selectedAlternativePaymentMethodType()
+                            }
+                        };
+                    }
+
+                    additionalData.stateData = JSON.stringify(stateData);
+
+                    if (selectedAlternativePaymentMethodType() == 'ratepay') {
+                        additionalData.df_value = this.getRatePayDeviceIdentToken();
+                    }
+
+                    console.log(additionalData);
+
+                    data.additional_data = additionalData;
+                    this.placeRedirectOrder(data);
+                }
+
+                return false;
+
+            },
             handleOnAdditionalDetails: function(state, component) {
                 var self = this;
 
@@ -560,7 +578,7 @@ define(
                     self.closeModal(self.popupModal);
                     errorProcessor.process(response,
                         self.currentMessageContainer);
-                    self.isPlaceOrderActionAllowed(true);
+                    //self.isPlaceOrderActionAllowed(true);
                     self.showErrorMessage(response);
                 });
             },
@@ -570,22 +588,23 @@ define(
              */
             showErrorMessage: function(response) {
                 if (!!response['responseJSON'].parameters) {
-                    $('#messages-' + brandCode()).
+                    $('#messages-' + selectedAlternativePaymentMethodType()).
                         text((response['responseJSON'].message).replace('%1',
                             response['responseJSON'].parameters[0])).
                         slideDown();
                 } else {
-                    $('#messages-' + brandCode()).
+                    $('#messages-' + selectedAlternativePaymentMethodType()).
                         text(response['responseJSON'].message).
                         slideDown();
                 }
 
                 setTimeout(function() {
-                    $('#messages-' + brandCode()).slideUp();
+                    $('#messages-' + selectedAlternativePaymentMethodType()).slideUp();
                 }, 10000);
             },
-            validate: function(brandCode) {
-                var form = '#payment_form_' + this.getCode() + '_' + brandCode;
+            validate: function(paymentMethodType) {
+                var form = '#payment_form_' + this.getCode() + '_' + paymentMethodType;
+
                 var validate = $(form).validation() &&
                     $(form).validation('isValid');
 
@@ -595,21 +614,14 @@ define(
 
                 return true;
             },
-            /**
-             * Returns the payment method's brand code using the payment method from the response object
-             * (in checkout api it is the type)
-             * @returns {*}
-             */
-            getBrandCodeFromPaymentMethod: function(paymentMethod) {
-                if (typeof paymentMethod.type !== 'undefined') {
-                    return paymentMethod.type;
-                }
+            isButtonActive: function() {
 
-                return '';
             },
-
             getRatePayDeviceIdentToken: function() {
                 return window.checkoutConfig.payment.adyenHpp.deviceIdentToken;
+            },
+            getCode: function() {
+                return window.checkoutConfig.payment.adyenHpp.methodCode;
             },
         });
     },
