@@ -1870,7 +1870,7 @@ class Cron
      */
     protected function _isBankTransfer()
     {
-        if (strlen($this->_paymentMethod) >= 12 && substr($this->_paymentMethod, 0, 12) == "bankTransfer") {
+        if (strlen($this->_paymentMethod) >= 12 && substr(s$this->_paymentMethod, 0, 12) == "bankTransfer") {
             $isBankTransfer = true;
         } else {
             $isBankTransfer = false;
