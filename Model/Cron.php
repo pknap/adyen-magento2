@@ -1855,6 +1855,7 @@ class Cron
             case 'svs':
             case 'givex':
             case 'valuelink':
+            case 'twint':
                 $manualCaptureAllowed = true;
                 break;
             default:
