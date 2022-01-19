@@ -28,7 +28,7 @@
             <adyen_abstract>
                 <active>0</active>
                 <model>AdyenPaymentGenericFacade</model>
-                <order_status>pending</order_status>
+                <order_creation_status>pending</order_creation_status>
                 <demo_mode>1</demo_mode>
                 <debug>1</debug>
                 <title_renderer>title_image</title_renderer>
@@ -101,7 +101,7 @@
             <adyen_hpp>
                 <active>0</active>
                 <model>AdyenPaymentHppFacade</model>
-                <order_status>pending</order_status>
+                <order_creation_status>pending</order_creation_status>
                 <title>Alternative payment methods</title>
                 <allowspecific>0</allowspecific>
                 <ratepay_id>oj9GsQ</ratepay_id>
@@ -122,7 +122,7 @@
             <adyen_pos_cloud>
                 <active>0</active>
                 <model>AdyenPaymentPosCloudFacade</model>
-                <order_status>pending</order_status>
+                <order_creation_status>pending</order_creation_status>
                 <title>Adyen POS Cloud API</title>
                 <allowspecific>0</allowspecific>
                 <sort_order>6</sort_order>
@@ -145,7 +145,7 @@
             <adyen_pay_by_link>
                 <active>0</active>
                 <model>AdyenPaymentPayByLinkFacade</model>
-                <order_status>pending</order_status>
+                <order_creation_status>pending</order_creation_status>
                 <title>Adyen Pay by Link</title>
                 <allowspecific>0</allowspecific>
                 <sort_order>7</sort_order>
