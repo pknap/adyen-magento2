@@ -355,4 +355,14 @@ class Config
             return $this->scopeConfig->isSetFlag($path, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $storeId);
         }
     }
+
+    /**
+     * Gets the order creation status flag
+     *
+     * @return bool|mixed
+     */
+    public function getOrderCreationStatus()
+    {
+        return $this->getConfigData('order_creation_status');
+    }
 }
