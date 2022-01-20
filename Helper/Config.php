@@ -48,6 +48,7 @@ class Config
     const XML_PAYMENT_RETURN_URL = 'payment_return_url';
     const XML_STATUS_FRAUD_MANUAL_REVIEW = 'fraud_manual_review_status';
     const XML_STATUS_FRAUD_MANUAL_REVIEW_ACCEPT = 'fraud_manual_review_accept_status';
+    const ORDER_CREATION_STATUS = 'order_creation_status';
 
     /**
      * @var ScopeConfigInterface
@@ -361,8 +362,8 @@ class Config
      *
      * @return bool|mixed
      */
-    public function getOrderCreationStatus()
+    public function getOrderCreationStatus($storeId)
     {
-        return $this->getConfigData('order_creation_status');
+        return $this->getConfigData(self::ORDER_CREATION_STATUS,self::XML_ADYEN_ABSTRACT, $storeId);
     }
 }
