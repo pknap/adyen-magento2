@@ -339,7 +339,7 @@ class Requests extends AbstractHelper
     public function buildCardRecurringData(int $storeId, $payment): array
     {
         $request = [];
-        $storePaymentMethod = false;
+        $storePaymentMethod = true;
 
         // Initialize the request body with the current state data
         // Multishipping checkout uses the cc_number field for state data
@@ -350,10 +350,9 @@ class Requests extends AbstractHelper
         // Else, if option to store token exists, get the value from the checkbox
         if ($payment->getMethod() === AdyenPayByLinkConfigProvider::CODE) {
             $request['storePaymentMethodMode'] = 'askForConsent';
-        } elseif (array_key_exists('storePaymentMethod', $stateData)) {
-            $storePaymentMethod = $stateData['storePaymentMethod'];
-            $request['storePaymentMethod'] = $storePaymentMethod;
         }
+
+        $request['storePaymentMethod'] = $storePaymentMethod;
 
         if ($storePaymentMethod) {
             if ($this->vaultHelper->isCardVaultEnabled()) {
