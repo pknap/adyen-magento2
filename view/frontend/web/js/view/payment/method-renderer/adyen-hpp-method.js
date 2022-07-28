@@ -242,12 +242,10 @@ define(
                     placeOrder: function() {
                         var innerSelf = this;
 
-                        // Skip in case of pms without a component (giftcards)
-                        if (innerSelf.component) {
-                            innerSelf.component.showValidation();
-                            if (innerSelf.component.state.isValid === false) {
-                                return false;
-                            }
+
+                        innerSelf.component.showValidation();
+                        if (innerSelf.component.state.isValid === false) {
+                            return false;
                         }
 
                         if (innerSelf.validate()) {
