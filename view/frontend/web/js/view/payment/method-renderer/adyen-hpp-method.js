@@ -313,7 +313,6 @@ define(
                         self.isPlaceOrderActionAllowed(true);
                         fullScreenLoader.stopLoader();
                         self.showErrorMessage(response);
-                        component.handleReject(response);
                     }
                 ).done(
                     function(orderId) {
