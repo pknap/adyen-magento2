@@ -118,6 +118,7 @@ volumes:
   certs:
   vhost:
   html:
+  acme:
   magento:
   composer:
 
