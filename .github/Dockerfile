@@ -23,7 +23,7 @@ MAGENTO_LANGUAGE=en_US \
 MAGENTO_CURRENCY=EUR \
 MAGENTO_TZ=Europe/Amsterdam \
 DEPLOY_SAMPLEDATA=0 \
-USE_SSL=0
+USE_SSL=1
 
 RUN apt-get update \
 	&& apt-get install -y libjpeg62-turbo-dev \
@@ -36,7 +36,13 @@ RUN apt-get update \
 		default-mysql-client \
 		wget \
 		cron \
-		unzip 
+		unzip \
+
+
+#RUN a2enmod rewrite && a2enmod ssl && a2enmod socache_shmcb
+#RUN sed -i '/SSLCertificateFile.*snakeoil\.pem/c\SSLCertificateFile \/etc\/ssl\/certs\/mycert.crt' /etc/apache2/sites-available/default-ssl.conf && sed -i '/SSLCertificateKeyFile.*snakeoil\.key/cSSLCertificateKeyFile /etc/ssl/private/mycert.key\' /etc/apache2/sites-available/default-ssl.conf
+#RUN a2ensite default-ssl
+#RUN apt-get update && apt-get upgrade -y
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install -j$(nproc) bcmath gd intl pdo_mysql simplexml soap sockets xsl zip
