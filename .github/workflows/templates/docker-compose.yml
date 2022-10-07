@@ -85,6 +85,8 @@ services:
       - acme:/etc/acme.sh
     environment:
       DEFAULT_EMAIL: magento@adyen.com
+    networks:
+      - nginx-proxy
 
 
 
