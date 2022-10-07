@@ -1,13 +1,9 @@
 name: E2E Tests
-run-name: Headless E2E test run for adyen-integration-tools-tests repo
+run-name: Headless E2E test run for adyen-integration-tools-tests repo ${{inputs.testBranch}}
 
 on:
   workflow_dispatch:
-    inputs:
-      testBranch:
-        description: "Test Branch from Integration Tools test test "
-        required: true
-        default: "develop"
+  push:
 
 jobs:
   build:
