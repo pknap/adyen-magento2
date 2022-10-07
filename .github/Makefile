@@ -131,20 +131,7 @@ mftf:
 # Simulate a full CI build
 ci:
 
-#     docker run -d --name
 
-    docker run -d --net backend --name nginx-proxy -p 8080:80 -p 4443:443 \
-        --volume certs:/etc/nginx/certs \
-        --volume vhost:/etc/nginx/vhost.d \
-        --volume html:/usr/share/nginx/html \
-        --volume /var/run/docker.sock:/tmp/docker.sock:ro \
-        nginxproxy/nginx-proxy
-
-    docker run -d --name nginx-proxy-acme -e DEFAULT_EMAIL=youremail@adyen.com \
-        --volumes-from nginx-proxy \
-        --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-        --volume acme:/etc/acme.sh \
-        nginxproxy/acme-companion
 	docker-compose -f workflows/templates/docker-compose.yml run --rm web make magento
 	docker-compose -f workflows/templates/docker-compose.yml up -d web
 

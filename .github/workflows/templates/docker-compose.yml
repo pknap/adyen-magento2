@@ -23,7 +23,7 @@ services:
     networks:
       - backend
   web:
-    build: 
+    build:
       context: ../../
       args:
         - PHP_VERSION=${PHP_VERSION}
@@ -37,6 +37,8 @@ services:
       MAGENTO_HOST: magento2.test.com
       VIRTUAL_HOST: magento2.test.com
       LETSENCRYPT_HOST: magento2.test.com
+      LETSENCRYPT_EMAIL: magento@adyen.com
+      USE_SSL: 1
       COMPOSER_MEMORY_LIMIT: -1
       DEPLOY_SAMPLEDATA: 1
       DONATION_ACCOUNT:
@@ -47,6 +49,7 @@ services:
       ADYEN_CLIENT_KEY:
       PHP_VERSION:
       MAGENTO_VERSION:
+
 
     depends_on:
       - db
@@ -60,6 +63,32 @@ services:
       backend:
         aliases:
           - magento2.test.com
+
+  nginx_proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - 8080:80
+      - 4443:443
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  acme:
+    container_name: nginx-proxy-acme
+    image: nginxproxy/acme-companion
+    volumes_from:
+      -nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/etc/acme.sh
+    environment:
+      DEFAULT_EMAIL: magento@adyen.com
+
+
+
+
+
   playwright:
     image: mcr.microsoft.com/playwright:v1.25.0-focal
     shm_size: 1gb
@@ -79,7 +108,11 @@ services:
       - ../../scripts/e2e.sh:/e2e.sh
       - ../../../test-report:/tmp/test-report
 networks:
+  nginx-proxy:
+    external:
+      name: backend
   backend:
+
 volumes:
   magento:
   composer:
