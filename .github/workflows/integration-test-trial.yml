@@ -39,6 +39,8 @@ jobs:
 
       - name: Setup permissions
         run: docker exec magento2-container make fs
+      - name: run cron
+        run: docker exec magento2-container /etc/init.d/cron stop
 
       - name: Run E2E tests
         continue-on-error: true
