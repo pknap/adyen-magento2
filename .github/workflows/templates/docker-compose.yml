@@ -74,6 +74,7 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
+
   acme:
     container_name: nginx-proxy-acme
     image: nginxproxy/acme-companion
@@ -114,6 +115,9 @@ networks:
   backend:
 
 volumes:
+  certs:
+  vhost:
+  html:
   magento:
   composer:
 
