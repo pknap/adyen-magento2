@@ -44,7 +44,7 @@ RUN apt-get update \
 #RUN a2ensite default-ssl
 #RUN apt-get update && apt-get upgrade -y
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-configure gd --with-jpeg
 RUN docker-php-ext-install -j$(nproc) bcmath gd intl pdo_mysql simplexml soap sockets xsl zip
 
 COPY config/php.ini /usr/local/etc/php/
