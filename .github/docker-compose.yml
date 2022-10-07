@@ -38,6 +38,7 @@ services:
       - ELASTICSEARCH_SERVER=elasticsearch
       - MAGENTO_HOST=magento2.test.com
       - VIRTUAL_HOST=magento2.test.com
+      - LETSENCRYPT_HOST=magento2.test.com
       - ADMIN_URLEXT=admin
       - DONATION_ACCOUNT
       - ADMIN_USERNAME
