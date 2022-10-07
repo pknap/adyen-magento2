@@ -75,6 +75,8 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - backend
 
   acme:
     container_name: nginx-proxy-acme
@@ -87,7 +89,7 @@ services:
     environment:
       DEFAULT_EMAIL: magento@adyen.com
     networks:
-      - nginx-proxy
+      - backend
 
 
 
@@ -112,9 +114,9 @@ services:
       - ../../scripts/e2e.sh:/e2e.sh
       - ../../../test-report:/tmp/test-report
 networks:
-  nginx-proxy:
-    external:
-      name: backend
+#  nginx-proxy:
+#    external:
+#      name: backend
   backend:
 
 volumes:
