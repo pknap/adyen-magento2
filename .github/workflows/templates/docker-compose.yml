@@ -64,7 +64,8 @@ services:
         aliases:
           - magento2.test.com
 
-  nginx_proxy:
+  nginx-proxy:
+    container_name: nginx-proxy
     image: nginxproxy/nginx-proxy
     ports:
       - 8080:80
