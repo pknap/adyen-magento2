@@ -1,5 +1,7 @@
-name: Integration Tests TRIAL FOR PW-
-on: [pull_request]
+name: Integration Tests TRIAL FOR FIXING SSL
+on:
+  workflow_dispatch:
+  push:
 
 jobs:
   build:
