@@ -49,7 +49,7 @@ jobs:
           INTEGRATION_TESTS_BRANCH: ${{inputs.testBranch}}
           MAGENTO_ADMIN_USERNAME: ${{secrets.MAGENTO_ADMIN_USERNAME}}
           MAGENTO_ADMIN_PASSWORD: ${{secrets.MAGENTO_ADMIN_PASSWORD}}
-          MAGENTO_BASE_URL: ${{secrets.MAGENTO_BASE_URL}}
+          MAGENTO_BASE_URL: "https://magento2.test.com"
           PAYPAL_USERNAME: ${{secrets.PLAYWRIGHT_PAYPAL_USERNAME}}
           PAYPAL_PASSWORD: ${{secrets.PLAYWRIGHT_PAYPAL_PASSWORD}}
 
