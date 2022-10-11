@@ -77,7 +77,9 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
       - backend
-
+    environment:
+      VIRTUAL_HOST: magento2.test.com
+      DEFAULT_HOST: magento2.test.com
   acme:
     container_name: nginx-proxy-acme
     image: nginxproxy/acme-companion
