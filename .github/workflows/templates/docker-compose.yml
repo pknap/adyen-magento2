@@ -81,19 +81,16 @@ services:
   acme:
     container_name: nginx-proxy-acme
     image: nginxproxy/acme-companion
-    volumes_from:
-      - nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - acme:/etc/acme.sh
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
     environment:
       DEFAULT_EMAIL: magento@adyen.com
     networks:
       - backend
-
-
-
-
 
   playwright:
     image: mcr.microsoft.com/playwright:v1.25.0-focal
@@ -114,9 +111,6 @@ services:
       - ../../scripts/e2e.sh:/e2e.sh
       - ../../../test-report:/tmp/test-report
 networks:
-#  nginx-proxy:
-#    external:
-#      name: backend
   backend:
 
 volumes:
@@ -126,5 +120,3 @@ volumes:
   acme:
   magento:
   composer:
-
-#Check again
