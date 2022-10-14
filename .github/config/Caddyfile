@@ -1,5 +1,3 @@
 magento2.test.com {
-
         reverse_proxy magento2-container:80
-
     }

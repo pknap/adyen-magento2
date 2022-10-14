@@ -30,7 +30,7 @@ services:
         - MAGENTO_VERSION=${MAGENTO_VERSION}
     container_name: magento2-container
     extra_hosts:
-      - "magento2.test.com:127.0.0.1"
+      - "localhost:127.0.0.1"
     environment:
       DB_SERVER: mariadb
       ELASTICSEARCH_SERVER: elasticsearch
@@ -65,16 +65,16 @@ services:
           - magento2.test.com
 
 
-  caddy:
-    container_name: caddy
-    image: caddy
-    ports:
-      - 80:80
-      - 443:443
-    networks:
-      - backend
-    volumes:
-      - ../../config/Caddyfile:/../../config/Caddyfile
+#  caddy:
+#    container_name: caddy
+#    image: caddy
+#    ports:
+#      - 80:80
+#      - 443:443
+#    networks:
+#      - backend
+#    volumes:
+#      - ../../config/Caddyfile:/../../config/Caddyfile
 
 
 #
