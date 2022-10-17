@@ -38,7 +38,7 @@ services:
       VIRTUAL_HOST: localhost
 #      LETSENCRYPT_HOST: magento2.test.com
 #      LETSENCRYPT_EMAIL: magento@adyen.com
-      USE_SSL: 1
+      USE_SSL: 0
       COMPOSER_MEMORY_LIMIT: -1
       DEPLOY_SAMPLEDATA: 1
       DONATION_ACCOUNT:
@@ -49,6 +49,7 @@ services:
       ADYEN_CLIENT_KEY:
       PHP_VERSION:
       MAGENTO_VERSION:
+  # Add the enviornment variables for certificate and key here.
 
 
     depends_on:
