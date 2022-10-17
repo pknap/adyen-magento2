@@ -62,7 +62,7 @@ services:
     networks:
       backend:
         aliases:
-          - magento2.test.com
+          - localhost
 
 
 #  caddy:
