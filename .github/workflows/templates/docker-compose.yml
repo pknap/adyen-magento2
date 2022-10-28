@@ -35,7 +35,6 @@ services:
       DB_SERVER: mariadb
       ELASTICSEARCH_SERVER: elasticsearch
       MAGENTO_HOST: magento2.test.com
-      VIRTUAL_HOST: magento2.test.com
       USE_SSL: 1
       COMPOSER_MEMORY_LIMIT: -1
       DEPLOY_SAMPLEDATA: 1
@@ -62,23 +61,7 @@ services:
       backend:
         aliases:
           - localhost
-
-
-  caddy:
-    container_name: caddy
-    image: caddy
-    ports:
-      - 80:80
-      - 443:443
-    networks:
-      - backend
-    volumes:
-      - ../../config/Caddyfile:/../../config/Caddyfile
-    extra_hosts:
-      - "magento2.test.com:127.0.0.1"
-
-
-
+          -
   playwright:
     image: mcr.microsoft.com/playwright:v1.25.0-focal
     shm_size: 1gb
@@ -105,6 +88,5 @@ volumes:
   certs:
   vhost:
   html:
-  acme:
   magento:
   composer:

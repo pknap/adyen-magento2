@@ -52,4 +52,6 @@ ADD "https://github.com/magento/magento2-sample-data/archive/refs/tags/${MAGENTO
 
 RUN chmod +x /tmp/install_magento.sh
 
+EXPOSE 443 80
+
 CMD ["bash", "/tmp/install_magento.sh"]
