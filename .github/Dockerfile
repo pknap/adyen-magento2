@@ -43,7 +43,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install -j$(nproc) bcmath gd intl pdo_mysql simplexml soap sockets xsl zip
 RUN a2enmod ssl
 RUN a2ensite default-ssl.conf
-EXPOSE 80, 443
+#EXPOSE 80, 443
 WORKDIR var/www/html
 COPY config/php.ini /usr/local/etc/php/
 COPY config/install_magento.sh /tmp/install_magento.sh
