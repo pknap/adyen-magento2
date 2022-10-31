@@ -23,7 +23,7 @@ MAGENTO_LANGUAGE=en_US \
 MAGENTO_CURRENCY=EUR \
 MAGENTO_TZ=Europe/Amsterdam \
 DEPLOY_SAMPLEDATA=0 \
-USE_SSL=1
+USE_SSL=0
 
 RUN apt-get update \
 	&& apt-get install -y libjpeg62-turbo-dev \
@@ -34,13 +34,17 @@ RUN apt-get update \
 		libssl-dev \
 		libxslt-dev \
 		default-mysql-client \
+        ssl-cert \
 		wget \
 		cron \
 		unzip
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install -j$(nproc) bcmath gd intl pdo_mysql simplexml soap sockets xsl zip
-
+RUN a2enmod ssl
+RUN a2ensite default-ssl.conf
+EXPOSE 80, 443
+WORKDIR var/www/html
 COPY config/php.ini /usr/local/etc/php/
 COPY config/install_magento.sh /tmp/install_magento.sh
 
@@ -51,7 +55,5 @@ ADD "https://github.com/magento/magento2/archive/refs/tags/${MAGENTO_VERSION}.ta
 ADD "https://github.com/magento/magento2-sample-data/archive/refs/tags/${MAGENTO_VERSION}.tar.gz" /tmp/sample-data.tar.gz
 
 RUN chmod +x /tmp/install_magento.sh
-
-EXPOSE 443 80
 
 CMD ["bash", "/tmp/install_magento.sh"]

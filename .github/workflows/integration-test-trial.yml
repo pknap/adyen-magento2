@@ -9,8 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      PHP_VERSION: "8.1"
-      MAGENTO_VERSION: "2.4.5"
+      PHP_VERSION: "7.4"
+      MAGENTO_VERSION: "2.4.4"
       ADMIN_USERNAME: ${{secrets.MAGENTO_ADMIN_USERNAME}}
       ADMIN_PASSWORD: ${{secrets.MAGENTO_ADMIN_PASSWORD}}
     steps:

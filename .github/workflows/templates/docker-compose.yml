@@ -29,8 +29,8 @@ services:
         - PHP_VERSION=${PHP_VERSION}
         - MAGENTO_VERSION=${MAGENTO_VERSION}
     container_name: magento2-container
-#    extra_hosts:
-#      - "magento2.test.com:127.0.0.1"
+    extra_hosts:
+      - "magento2.test.com:127.0.0.1"
     environment:
       DB_SERVER: mariadb
       ELASTICSEARCH_SERVER: elasticsearch
