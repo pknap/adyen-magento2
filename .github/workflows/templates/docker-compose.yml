@@ -47,8 +47,6 @@ services:
       PHP_VERSION:
       MAGENTO_VERSION:
   # Add the enviornment variables for certificate and key here.
-
-
     depends_on:
       - db
       - elastic
@@ -60,8 +58,7 @@ services:
     networks:
       backend:
         aliases:
-          - localhost
-          -
+          - magento2.test.com
   playwright:
     image: mcr.microsoft.com/playwright:v1.25.0-focal
     shm_size: 1gb
@@ -83,7 +80,6 @@ services:
 
 networks:
   backend:
-
 volumes:
   certs:
   vhost:
