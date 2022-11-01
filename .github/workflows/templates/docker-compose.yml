@@ -34,8 +34,8 @@ services:
     environment:
       DB_SERVER: mariadb
       ELASTICSEARCH_SERVER: elasticsearch
-      MAGENTO_HOST: https://magento2.test.com
-      VIRTUAL_HOST: https://magento2.test.com
+      MAGENTO_HOST: magento2.test.com
+      VIRTUAL_HOST: magento2.test.com
       COMPOSER_MEMORY_LIMIT: -1
       DEPLOY_SAMPLEDATA: 1
       DONATION_ACCOUNT:
@@ -59,7 +59,7 @@ services:
     networks:
       backend:
         aliases:
-          - https://magento2.test.com
+          - magento2.test.com
   playwright:
     image: mcr.microsoft.com/playwright:v1.25.0-focal
     shm_size: 1gb

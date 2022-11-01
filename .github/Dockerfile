@@ -41,14 +41,14 @@ RUN apt-get update \
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install -j$(nproc) bcmath gd intl pdo_mysql simplexml soap sockets xsl zip
-RUN a2enmod ssl
-RUN a2ensite default-ssl.conf
+#RUN a2enmod ssl
+#RUN a2ensite default-ssl.conf
 #EXPOSE 80, 443
 WORKDIR /var/www/html
 COPY config/php.ini /usr/local/etc/php/
 COPY config/install_magento.sh /tmp/install_magento.sh
 
-RUN if [ -x "$(command -v apache2-foreground)" ]; then a2enmod rewrite; fi
+RUN if [ -x "$(command -v apache2-foreground)" ]; then a2enmod rewrite then a2enmod ssl then a2ensite default-ssl.conf ; fi
 
 ARG MAGENTO_VERSION
 ADD "https://github.com/magento/magento2/archive/refs/tags/${MAGENTO_VERSION}.tar.gz" /tmp/magento.tar.gz
