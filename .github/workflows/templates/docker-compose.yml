@@ -26,8 +26,8 @@ services:
     build:
       context: ../../
       args:
-        - PHP_VERSION=${PHP_VERSION}
-        - MAGENTO_VERSION=${MAGENTO_VERSION}
+        - PHP_VERSION=7.4
+        - MAGENTO_VERSION=2.4.4
     container_name: magento2-container
     extra_hosts:
       - "magento2.test.com:127.0.0.1"
@@ -35,7 +35,7 @@ services:
       DB_SERVER: mariadb
       ELASTICSEARCH_SERVER: elasticsearch
       MAGENTO_HOST: magento2.test.com
-      USE_SSL: 1
+      VIRTUAL_HOST: magento2.test.com
       COMPOSER_MEMORY_LIMIT: -1
       DEPLOY_SAMPLEDATA: 1
       DONATION_ACCOUNT:
@@ -46,10 +46,11 @@ services:
       ADYEN_CLIENT_KEY:
       PHP_VERSION:
       MAGENTO_VERSION:
-  # Add the enviornment variables for certificate and key here.
     depends_on:
       - db
       - elastic
+    ports:
+      - 80:80
     volumes:
       - ../../../:/data/extensions/workdir
       - composer:/usr/local/bin
@@ -77,12 +78,8 @@ services:
     volumes:
       - ../../scripts/e2e.sh:/e2e.sh
       - ../../../test-report:/tmp/test-report
-
 networks:
   backend:
 volumes:
-  certs:
-  vhost:
-  html:
   magento:
   composer:
