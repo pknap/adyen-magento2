@@ -7,7 +7,7 @@ on:
       testBranch:
         description: "Test Branch from Integration Tools Repo"
         required: true
-        default: "develop"
+        default: "api-key-issue"
 
 jobs:
   build:
@@ -55,8 +55,8 @@ jobs:
           MAGENTO_BASE_URL: ${{secrets.MAGENTO_BASE_URL}}
           PAYPAL_USERNAME: ${{secrets.PLAYWRIGHT_PAYPAL_USERNAME}}
           PAYPAL_PASSWORD: ${{secrets.PLAYWRIGHT_PAYPAL_PASSWORD}}
-          ADYEN_API_KEY : ${{secrets.ADYEN_API_KEY}}
-          ADYEN_CLIENT_KEY : ${{secrets.ADYEN_CLIENT_KEY}}
+          ADYEN_API_KEY: ${{secrets.ADYEN_API_KEY}}
+          ADYEN_CLIENT_KEY: ${{secrets.ADYEN_CLIENT_KEY}}
           ADYEN_MERCHANT: ${{secrets.ADYEN_MERCHANT}}
 
       - name: Archive test result artifacts
