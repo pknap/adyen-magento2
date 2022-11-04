@@ -17,6 +17,10 @@ jobs:
       MAGENTO_VERSION: "2.4.5"
       ADMIN_USERNAME: ${{secrets.MAGENTO_ADMIN_USERNAME}}
       ADMIN_PASSWORD: ${{secrets.MAGENTO_ADMIN_PASSWORD}}
+      ADYEN_API_KEY: ${{secrets.ADYEN_API_KEY}}
+      ADYEN_CLIENT_KEY: ${{secrets.ADYEN_CLIENT_KEY}}
+      ADYEN_MERCHANT: ${{secrets.ADYEN_MERCHANT}}
+
     steps:
       - uses: actions/checkout@v2
 
@@ -55,9 +59,6 @@ jobs:
           MAGENTO_BASE_URL: ${{secrets.MAGENTO_BASE_URL}}
           PAYPAL_USERNAME: ${{secrets.PLAYWRIGHT_PAYPAL_USERNAME}}
           PAYPAL_PASSWORD: ${{secrets.PLAYWRIGHT_PAYPAL_PASSWORD}}
-          ADYEN_API_KEY: ${{secrets.ADYEN_API_KEY}}
-          ADYEN_CLIENT_KEY: ${{secrets.ADYEN_CLIENT_KEY}}
-          ADYEN_MERCHANT: ${{secrets.ADYEN_MERCHANT}}
 
       - name: Archive test result artifacts
         if: always()
