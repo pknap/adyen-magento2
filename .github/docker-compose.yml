@@ -23,11 +23,7 @@ services:
       - "discovery.type=single-node"
       - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
   web:
-    build:
-      context: .
-      args:
-        - PHP_VERSION=${PHP_VERSION}
-        - MAGENTO_VERSION=${MAGENTO_VERSION}
+    image: cenkiravul/docker-magento:2.4.5-p1
     container_name: magento2-container
     networks:
       backend:
