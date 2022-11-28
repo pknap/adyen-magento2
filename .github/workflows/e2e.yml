@@ -34,7 +34,7 @@ jobs:
           ADYEN_CLIENT_KEY: ${{secrets.ADYEN_CLIENT_KEY}}
 
       - name: Setup permissions
-        run: docker exec magento2-container-test-test make fs
+        run: docker exec magento2-container-test make fs
 
       - name: Check install
         run: docker exec magento2-container-test make sys-check
