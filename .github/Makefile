@@ -132,17 +132,17 @@ mftf:
 	vendor/bin/mftf run:group --remove -- AdyenMagentoSuite || vendor/bin/mftf run:failed
 
 # Simulate a full CI build
-ci:
-	docker-compose -f workflows/templates/docker-compose.yml run --rm web make magento
-	docker-compose -f workflows/templates/docker-compose.yml up -d web
+# ci:
+# 	docker-compose -f workflows/templates/docker-compose.yml run --rm web make magento
+# 	docker-compose -f workflows/templates/docker-compose.yml up -d web
 
-	docker exec magento2-container make fs
-	docker exec magento2-container make sys-check
-	docker exec -u www-data magento2-container make plugin
-	docker exec magento2-container /etc/init.d/cron stop
-	docker exec -u www-data magento2-container make unit
-	docker exec magento2-container make graphql
-	docker exec -u www-data magento2-container make production
-	docker exec magento2-container make fs
+# 	docker exec magento2-container make fs
+# 	docker exec magento2-container make sys-check
+# 	docker exec -u www-data magento2-container make plugin
+# 	docker exec magento2-container /etc/init.d/cron stop
+# 	docker exec -u www-data magento2-container make unit
+# 	docker exec magento2-container make graphql
+# 	docker exec -u www-data magento2-container make production
+# 	docker exec magento2-container make fs
 
-	docker-compose -f workflows/templates/docker-compose.yml run --rm playwright /e2e.sh
+# 	docker-compose -f workflows/templates/docker-compose.yml run --rm playwright /e2e.sh
