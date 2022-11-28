@@ -24,7 +24,7 @@ services:
       - backend
   web:
     image: cenkiravul/docker-magento:2.4.5-p1
-    container_name: magento2-container
+    container_name: magento2-container-test
     extra_hosts:
       - "magento2.test.com:127.0.0.1"
     environment:
