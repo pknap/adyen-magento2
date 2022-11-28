@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install Magento
-        run: docker-compose -f .github/workflows/templates/docker-compose.yml run --rm web make magento
+        run: docker-compose -f .github/workflows/templates/docker-compose.yml
 
       - name: Start web server in background
         run: docker-compose -f .github/workflows/templates/docker-compose.yml up -d web
