@@ -53,12 +53,12 @@ flush:
 plugin: install configure flush
 
 # Setup permissions
-fs:
-	find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
-	find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
-	chown -R www-data:www-data .
-	chmod u+x bin/magento
-	echo "memory_limit = -1" > /usr/local/etc/php/conf.d/memory.ini
+# fs:
+# 	find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
+# 	find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+# 	chown -R www-data:www-data .
+# 	chmod u+x bin/magento
+# 	echo "memory_limit = -1" > /usr/local/etc/php/conf.d/memory.ini
 
 # Deploy sample data
 sampledata:
