@@ -19,6 +19,8 @@ jobs:
       MAGENTO_VERSION: "2.4.5"
       ADMIN_USERNAME: ${{secrets.MAGENTO_ADMIN_USERNAME}}
       ADMIN_PASSWORD: ${{secrets.MAGENTO_ADMIN_PASSWORD}}
+
+    container: cenkiravul/docker-magento:2.4.5-p1
     steps:
       - uses: actions/checkout@v2
 
