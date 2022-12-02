@@ -50,8 +50,8 @@ jobs:
           - 9200:9200
           - 9300:9300
         env:
-          "discovery.type=single-node"
-          ES_JAVA_OPTS=-Xms750m -Xmx750m
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms750m -Xmx750m
 
     steps:
       - uses: actions/checkout@v2
