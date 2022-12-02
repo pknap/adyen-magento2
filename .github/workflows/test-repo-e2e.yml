@@ -14,30 +14,47 @@ jobs:
     runs-on:
       group: larger-runners
       labels: ubuntu-latest-8-cores
+    container:
+      image: ataberkylmz/magento2
     env:
       PHP_VERSION: "8.1"
       MAGENTO_VERSION: "2.4.5"
       ADMIN_USERNAME: ${{secrets.MAGENTO_ADMIN_USERNAME}}
       ADMIN_PASSWORD: ${{secrets.MAGENTO_ADMIN_PASSWORD}}
+      DB_SERVER: mariadb
+      ELASTICSEARCH_SERVER: elasticsearch
+      MAGENTO_HOST: magento2.test.com
+      VIRTUAL_HOST: magento2.test.com
+      COMPOSER_MEMORY_LIMIT: -1
+      DEPLOY_SAMPLEDATA: 1
+    ports:
+      - 80, 443
+    volumes:
+      - magento:/var/www/html
+      - composer:/usr/local/bin
+    services:
+      mariadb:
+        image: mariadb:10.4
+        env:
+          MARIADB_ROOT_PASSWORD: root_password
+          MARIADB_DATABASE: magento
+          MARIADB_USER: magento
+          MARIADB_PASSWORD: magento
+        volumes:
+          - sqldata:/var/lib/mysql
+          - sqlsocket:/var/run/msqld
+
+      elasticsearch:
+        image: elasticsearch:7.16.2
+        ports:
+          - 9200:9200
+          - 9300:9300
+        env:
+          "discovery.type=single-node"
+          ES_JAVA_OPTS=-Xms750m -Xmx750m
+
     steps:
       - uses: actions/checkout@v2
-
-      - name: Install Magento
-        run: docker-compose -f .github/workflows/templates/docker-compose.yml run --rm web make magento
-
-      - name: Start web server in background
-        run: docker-compose -f .github/workflows/templates/docker-compose.yml up -d web
-        env:
-          DONATION_ACCOUNT: ${{secrets.DONATION_ACCOUNT}}
-          ADYEN_MERCHANT: ${{secrets.ADYEN_MERCHANT}}
-          ADYEN_API_KEY: ${{secrets.ADYEN_API_KEY}}
-          ADYEN_CLIENT_KEY: ${{secrets.ADYEN_CLIENT_KEY}}
-
-      - name: Setup permissions
-        run: docker exec magento2-container make fs
-
-      - name: Check install
-        run: docker exec magento2-container make sys-check
 
       - name: Install plugin
         run: docker exec -u www-data magento2-container make plugin
