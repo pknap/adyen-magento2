@@ -19,9 +19,11 @@
             layout([
                 {
                     component: 'Adyen_Payment/js/view/payment/method-renderer/multishipping/adyen-hpp-method',
-                    name: 'payment_method_adyen_hpp',
-                    method: 'adyen_hpp',
-                    item: { method: 'adyen_hpp' }
+                    // TODO multishipping made a change for testing purposes only,
+                    //  include all the methods here as now it only includes amazonpay
+                    name: 'payment_method_adyen_amazonpay',
+                    method: 'adyen_amazonpay',
+                    item: { method: 'adyen_amazonpay' }
                 }
             ]);
             $('body').trigger('contentUpdated');

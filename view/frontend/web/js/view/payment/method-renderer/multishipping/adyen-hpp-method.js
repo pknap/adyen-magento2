@@ -11,7 +11,8 @@
 /*global define*/
 define([
     'jquery',
-    'Adyen_Payment/js/view/payment/method-renderer/adyen-hpp-method',
+    // TODO multishipping - all js method files need to be imported here
+    'Adyen_Payment/js/view/payment/method-renderer/adyen-amazonpay-method',
     'Adyen_Payment/js/model/adyen-payment-service',
     'Adyen_Payment/js/model/adyen-configuration',
     'Magento_Checkout/js/model/quote',
@@ -31,6 +32,7 @@ define([
             template: 'Adyen_Payment/payment/multishipping/hpp-form'
         },
         initialize: function () {
+            debugger;
             var self = this;
             // Retrieve adyen payment methods
             adyenPaymentService.retrievePaymentMethods().done(function(paymentMethods) {
