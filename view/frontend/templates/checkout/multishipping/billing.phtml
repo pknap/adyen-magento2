@@ -133,13 +133,11 @@
 
                             <!-- Adyen plugin customization -->
                             <!-- Replace HPP block with list of payment methods -->
-                            <?php if ($hppPaymentMethod):?>
                             <div data-bind="scope: 'payment_method_adyen_hpp'">
-                                <?php if ($html = $block->getChildHtml('payment.method.adyen_hpp', false)): ?>
+                                <?php if ($html = $block->getChildHtml('payment.method.adyen_klarna', false)): ?>
                                     <?= /* @noEscape */ $html; ?>
                                 <?php endif; ?>
                             </div>
-                            <?php endif; ?>
                             <!-- End: Adyen plugin customization -->
 
                         </dl>
