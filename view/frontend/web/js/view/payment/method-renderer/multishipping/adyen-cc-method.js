@@ -16,6 +16,7 @@ define([
 ], function (
     $, Component, adyenConfiguration
 ) {
+    debugger;
     'use strict';
     return Component.extend({
         defaults: {
@@ -31,7 +32,7 @@ define([
             if (!self.getClientKey) {
                 return;
             }
-            self.cardComponent = self.checkoutComponent.create('card', {
+            self.cardComponent = this.checkoutComponent.create('card', {
                 enableStoreDetails: self.getEnableStoreDetails(),
                 brands: self.getBrands(),
                 hasHolderName: adyenConfiguration.getHasHolderName(),

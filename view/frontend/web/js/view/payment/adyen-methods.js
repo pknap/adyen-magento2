@@ -94,6 +94,7 @@ define(
         /** Add view logic here if needed */
         return Component.extend({
             initialize: function () {
+                debugger;
                 this._super();
 
                 var billingAddressCountry = "";
@@ -129,6 +130,7 @@ define(
                 cancelCouponAction.registerSuccessCallback(function () {
                     retrievePaymentMethods();
                 });
+                retrievePaymentMethods();
             }
         });
     }

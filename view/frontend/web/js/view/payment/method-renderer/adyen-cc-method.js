@@ -56,7 +56,8 @@ define(
                 installment: '', // keep it until the component implements installments
                 orderId: 0, // TODO is this the best place to store it?
                 storeCc: false,
-                modalLabel: 'cc_actionModal'
+                modalLabel: 'cc_actionModal',
+                checkoutComponent: null
             },
             initObservable: function() {
                 this._super().observe([
@@ -74,12 +75,21 @@ define(
              * @returns {exports.initialize}
              */
             initialize: function () {
+                debugger;
                 this._super();
                 this.vaultEnabler = new VaultEnabler();
                 this.vaultEnabler.setPaymentCode(this.getVaultCode());
                 this.vaultEnabler.isActivePaymentTokenEnabler(false);
 
                 let self = this;
+
+                adyenPaymentService.retrievePaymentMethods().done(function(paymentMethods) {
+                    paymentMethods = JSON.parse(paymentMethods);
+                    adyenPaymentService.setPaymentMethods(paymentMethods);
+                    fullScreenLoader.stopLoader();
+                }).fail(function() {
+                    console.log('Fetching the payment methods failed!');
+                })
 
                 let paymentMethodsObserver = adyenPaymentService.getPaymentMethods();
                 paymentMethodsObserver.subscribe(
@@ -92,6 +102,7 @@ define(
             },
             loadCheckoutComponent: async function (paymentMethodsResponse) {
                 let self = this;
+                debugger;
 
                 this.checkoutComponent = await adyenCheckout.buildCheckoutComponent(
                     paymentMethodsResponse,

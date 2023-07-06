@@ -32,6 +32,7 @@ define(
              * Retrieve the list of available payment methods from Adyen
              */
             retrievePaymentMethods: function() {
+                debugger;
                 // url for guest users
                 var serviceUrl = urlBuilder.createUrl(
                     '/guest-carts/:cartId/retrieve-adyen-payment-methods', {
@@ -57,6 +58,7 @@ define(
             },
 
             getPaymentMethods: function() {
+                debugger;
                 return this.paymentMethods;
             },
 
