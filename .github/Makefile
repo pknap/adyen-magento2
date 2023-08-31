@@ -37,6 +37,8 @@ configure: n98-magerun2.phar
 	bin/magento config:set payment/adyen_abstract/notifications_ip_check 0
 	./n98-magerun2.phar config:store:set --encrypt payment/adyen_abstract/api_key_test "${ADYEN_API_KEY}" > /dev/null
 	bin/magento config:set payment/adyen_abstract/client_key_test "${ADYEN_CLIENT_KEY}"
+	bin/magento config:set payment/adyen_abstract/recurring_configuration '{"adyen_cc": { "name": "Credit Card", "enabled": "1", "recurringProcessingModel": "CardOnFile"}}'
+
 
 # Clear cache
 flush:
