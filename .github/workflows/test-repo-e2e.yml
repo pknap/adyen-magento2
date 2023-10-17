@@ -43,6 +43,7 @@ jobs:
           ADYEN_MERCHANT: ${{secrets.ADYEN_MERCHANT}}
           ADYEN_API_KEY: ${{secrets.ADYEN_API_KEY}}
           ADYEN_CLIENT_KEY: ${{secrets.ADYEN_CLIENT_KEY}}
+          GITHUB_TOKEN: ${{secrets.ADYEN_AUTOMATION_BOT_TEST_ACCESS_TOKEN}}
 
       - name: Setup permissions
         run: docker exec magento2-container make fs
@@ -84,8 +85,6 @@ jobs:
 
       - name: Install developer module
         run: docker exec -u www-data magento2-container make dev-module-alternative
-        env:
-          GITHUB_TOKEN: ${{secrets.ADYEN_AUTOMATION_BOT_TEST_ACCESS_TOKEN}}
 
       - name: Cache flush
         run: docker exec magento2-container make flush
@@ -112,6 +111,7 @@ jobs:
           GOOGLE_PASSWORD: ${{secrets.GOOGLE_PASSWORD}}
           WEBHOOK_USERNAME: ${{secrets.WEBHOOK_USERNAME}}
           WEBHOOK_PASSWORD: ${{secrets.WEBHOOK_PASSWORD}}
+          GITHUB_TOKEN: ${{secrets.ADYEN_AUTOMATION_BOT_TEST_ACCESS_TOKEN}}
 
       - name: Archive test result artifacts
         if: always()
