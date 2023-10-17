@@ -29,7 +29,7 @@ dev-module:
 
 dev-module-alternative:
 	composer config repositories.adyen/module-developer git https://${GITHUB_TOKEN}@github.com/Adyen/adyen-magento2-dev.git
-	composer require adyen/module-developer
+	composer require adyen/module-developer:dev-main
 	bin/magento setup:upgrade
 	bin/magento setup:di:compile
 
