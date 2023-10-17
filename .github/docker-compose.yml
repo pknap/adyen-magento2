@@ -49,6 +49,7 @@ services:
       - MAGENTO_VERSION
       - WEBHOOK_USERNAME
       - WEBHOOK_PASSWORD
+      - GITHUB_TOKEN
     depends_on:
       - db
       - elastic

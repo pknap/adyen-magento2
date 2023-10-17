@@ -46,6 +46,7 @@ services:
       ADYEN_CLIENT_KEY:
       PHP_VERSION:
       MAGENTO_VERSION:
+      GITHUB_TOKEN:
     depends_on:
       - db
       - elastic
