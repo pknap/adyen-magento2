@@ -28,7 +28,8 @@ dev-module:
 	bin/magento setup:static-content:deploy -f
 
 dev-module-alternative:
-	composer config repositories.adyen/module-developer git https://${GITHUB_TOKEN}@github.com/Adyen/adyen-magento2-dev.git
+	composer config github-oauth.github.com ${GITHUB_TOKEN}
+	composer config repositories.adyen/module-developer git https://github.com/Adyen/adyen-magento2-dev.git
 	composer require adyen/module-developer:dev-main
 	bin/magento setup:upgrade
 	bin/magento setup:di:compile
