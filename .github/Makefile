@@ -27,6 +27,12 @@ dev-module:
 	bin/magento setup:di:compile
 	bin/magento setup:static-content:deploy -f
 
+dev-module-alternative:
+	composer config repositories.adyen/module-developer git https://${GITHUB_TOKEN}@github.com/Adyen/adyen-magento2-dev.git
+	composer require adyen/module-developer
+	bin/magento setup:upgrade
+	bin/magento setup:di:compile
+
 # Configuration
 configure: n98-magerun2.phar
 	bin/magento config:set payment/adyen_abstract/demo_mode 1
