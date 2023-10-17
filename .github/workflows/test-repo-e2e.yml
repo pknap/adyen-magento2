@@ -55,6 +55,15 @@ jobs:
       - name: Kill Cron Jobs
         run: docker exec magento2-container /etc/init.d/cron stop
 
+      - name: Install Express module
+        run: docker exec -u www-data magento2-container composer require adyen/adyen-magento2-expresscheckout:dev-${{inputs.expressBranch}}
+
+      - name: Enable Express module
+        run: docker exec -u www-data magento2-container make enable-express
+
+      - name: Switch to production mode
+        run: docker exec -u www-data magento2-container make production
+
       - name: Checkout developer module
         uses: actions/checkout@v3
         with:
@@ -74,15 +83,6 @@ jobs:
 
       - name: Enable developer module
         run: docker exec -u www-data magento2-container make dev-module
-
-      - name: Install Express module
-        run: docker exec -u www-data magento2-container composer require adyen/adyen-magento2-expresscheckout:dev-${{inputs.expressBranch}}
-
-      - name: Enable Express module
-        run: docker exec -u www-data magento2-container make enable-express
-
-      - name: Switch to production mode
-        run: docker exec -u www-data magento2-container make production
 
       - name: Setup permissions
         run: docker exec magento2-container make fs
