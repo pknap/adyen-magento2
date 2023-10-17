@@ -26,7 +26,6 @@ dev-module:
 	bin/magento setup:upgrade
 	bin/magento setup:di:compile
 	bin/magento setup:static-content:deploy -f
-	bin/magento cache:flush
 
 # Configuration
 configure: n98-magerun2.phar

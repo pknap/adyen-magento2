@@ -84,6 +84,9 @@ jobs:
       - name: Enable developer module
         run: docker exec -u www-data magento2-container make dev-module
 
+      - name: Cache flush
+        run: docker exec magento2-container make flush
+
       - name: Setup permissions
         run: docker exec magento2-container make fs
 
