@@ -29,7 +29,6 @@ jobs:
       MAGENTO_VERSION: "2.4.5"
       ADMIN_USERNAME: ${{secrets.MAGENTO_ADMIN_USERNAME}}
       ADMIN_PASSWORD: ${{secrets.MAGENTO_ADMIN_PASSWORD}}
-      GITHUB_TOKEN: ${{secrets.ADYEN_AUTOMATION_BOT_TEST_ACCESS_TOKEN}}
 
     steps:
       - uses: actions/checkout@v3
@@ -57,11 +56,11 @@ jobs:
       - name: Kill Cron Jobs
         run: docker exec magento2-container /etc/init.d/cron stop
 
-      - name: Install Express module
-        run: docker exec -u www-data magento2-container composer require adyen/adyen-magento2-expresscheckout:dev-${{inputs.expressBranch}}
-
-      - name: Enable Express module
-        run: docker exec -u www-data magento2-container make enable-express
+#      - name: Install Express module
+#        run: docker exec -u www-data magento2-container composer require adyen/adyen-magento2-expresscheckout:dev-${{inputs.expressBranch}}
+#
+#      - name: Enable Express module
+#        run: docker exec -u www-data magento2-container make enable-express
 
 #      - name: Checkout developer module
 #        uses: actions/checkout@v3
@@ -85,6 +84,8 @@ jobs:
 
       - name: Install developer module
         run: docker exec -u www-data magento2-container make dev-module-alternative
+        env:
+          GITHUB_TOKEN: ${{secrets.ADYEN_AUTOMATION_BOT_TEST_ACCESS_TOKEN}}
 
       - name: Cache flush
         run: docker exec magento2-container make flush
