@@ -24,6 +24,8 @@ install:
 dev-module:
 	bin/magento module:enable Adyen_Developer
 	bin/magento setup:upgrade
+	bin/magento setup:di:compile
+	bin/magento cache:flush
 
 # Configuration
 configure: n98-magerun2.phar
