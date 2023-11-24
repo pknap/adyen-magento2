@@ -14,13 +14,14 @@ namespace Adyen\Payment\Gateway\Request;
 use Adyen\Payment\Helper\ChargedCurrency;
 use Adyen\Payment\Helper\Config;
 use Adyen\Payment\Helper\Data;
+use Adyen\Payment\Helper\EncryptedCardDetails;
 use Adyen\Payment\Helper\StateData;
 use Adyen\Payment\Helper\OpenInvoice;
 use Adyen\Payment\Model\Ui\AdyenBoletoConfigProvider;
 use Adyen\Payment\Model\Ui\AdyenPayByLinkConfigProvider;
 use Adyen\Payment\Observer\AdyenCcDataAssignObserver;
 use Adyen\Payment\Observer\AdyenPaymentMethodDataAssignObserver;
-use Magento\Catalog\Helper\Image;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Payment\Gateway\Data\PaymentDataObject;
 use Magento\Payment\Gateway\Helper\SubjectReader;
@@ -37,48 +38,22 @@ class CheckoutDataBuilder implements BuilderInterface
         self::ADYEN_BOLETO
     ];
 
-    /**
-     * @var Data
-     */
-    private $adyenHelper;
+    private Data $adyenHelper;
+    private CartRepositoryInterface $cartRepository;
+    private ChargedCurrency $chargedCurrency;
+    private StateData $stateData;
+    private Config $configHelper;
+    private OpenInvoice $openInvoiceHelper;
+    private EncryptedCardDetails $encryptedCardDetailsHelper;
 
-    /**
-     * @var CartRepositoryInterface
-     */
-    private $cartRepository;
-
-    /**
-     * @var ChargedCurrency
-     */
-    private $chargedCurrency;
-
-    /**
-     * @var StateData
-     */
-    private $stateData;
-
-    /** @var Config */
-    private $configHelper;
-
-    /** @var OpenInvoice */
-    private $openInvoiceHelper;
-
-    /**
-     * CheckoutDataBuilder constructor.
-     * @param Data $adyenHelper
-     * @param StateData $stateData
-     * @param CartRepositoryInterface $cartRepository
-     * @param ChargedCurrency $chargedCurrency
-     * @param Config $configHelper
-     * @param OpenInvoice $openInvoiceHelper
-     */
     public function __construct(
         Data $adyenHelper,
         StateData $stateData,
         CartRepositoryInterface $cartRepository,
         ChargedCurrency $chargedCurrency,
         Config $configHelper,
-        OpenInvoice $openInvoiceHelper
+        OpenInvoice $openInvoiceHelper,
+        EncryptedCardDetails $encryptedCardDetails
     ) {
         $this->adyenHelper = $adyenHelper;
         $this->stateData = $stateData;
@@ -86,12 +61,14 @@ class CheckoutDataBuilder implements BuilderInterface
         $this->chargedCurrency = $chargedCurrency;
         $this->configHelper = $configHelper;
         $this->openInvoiceHelper = $openInvoiceHelper;
+        $this->encryptedCardDetailsHelper = $encryptedCardDetails;
     }
 
     /**
      * @param array $buildSubject
      * @return array
      * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
     public function build(array $buildSubject): array
     {
@@ -105,6 +82,16 @@ class CheckoutDataBuilder implements BuilderInterface
         // Initialize the request body with the current state data
         // Multishipping checkout uses the cc_number field for state data
         $requestBody = $this->stateData->getStateData($order->getQuoteId());
+
+        // TODO:: Check multishipping
+        if (isset($requestBody['paymentMethod']['encryptedCardNumber']) &&
+        $this->encryptedCardDetailsHelper->isCardHashStoredInCache(
+            $requestBody['paymentMethod']['encryptedCardNumber'],
+            true
+        )) {
+            $errorMessage = __('Error with payment method, please select a different payment method.');
+            throw new LocalizedException($errorMessage);
+        }
 
         if (empty($requestBody) && !is_null($payment->getCcNumber())) {
             $requestBody = json_decode((string) $payment->getCcNumber(), true);
