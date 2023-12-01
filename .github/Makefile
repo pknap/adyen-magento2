@@ -22,6 +22,7 @@ install:
 
 # Install developer module
 dev-module:
+	composer require adyen/module-developer:dev-main
 	bin/magento module:enable Adyen_Developer
 	bin/magento setup:upgrade
 
