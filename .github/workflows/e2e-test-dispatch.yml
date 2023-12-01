@@ -68,7 +68,7 @@ jobs:
       #   run: docker exec magento2-container chown -R www-data:www-data /var/www/html/app/code/Adyen/Developer
 
       - name: Configure composer
-        run: docker exec -u www-data magento2-container composer config -g github-oauth.github.com ${{secrets.ADYEN_AUTOMATION_BOT_TEST_ACCESS_TOKEN}}
+        run: docker exec -u www-data magento2-container [composer config -g github-oauth.github.com ${{secrets.ADYEN_AUTOMATION_BOT_TEST_ACCESS_TOKEN}}]
 
       - name: Enable developer module
         run: docker exec -u www-data magento2-container make dev-module
