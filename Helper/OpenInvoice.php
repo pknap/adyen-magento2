@@ -14,11 +14,14 @@ namespace Adyen\Payment\Helper;
 
 use Adyen\Payment\Model\AdyenAmountCurrency;
 use Magento\Catalog\Helper\Image;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Invoice\Item;
 use Magento\Quote\Model\Quote;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Tax\Model\Config as MagentoTaxConfig;
 
 class OpenInvoice
 {
@@ -27,19 +30,22 @@ class OpenInvoice
     protected ChargedCurrency $chargedCurrency;
     protected Config $configHelper;
     protected Image $imageHelper;
+    protected ScopeConfigInterface $scopeConfig;
 
     public function __construct(
         Data                    $adyenHelper,
         CartRepositoryInterface $cartRepository,
         ChargedCurrency         $chargedCurrency,
         Config                  $configHelper,
-        Image                   $imageHelper
+        Image                   $imageHelper,
+        ScopeConfigInterface    $scopeConfig
     ) {
         $this->adyenHelper = $adyenHelper;
         $this->cartRepository = $cartRepository;
         $this->chargedCurrency = $chargedCurrency;
         $this->configHelper = $configHelper;
         $this->imageHelper = $imageHelper;
+        $this->scopeConfig = $scopeConfig;
     }
 
     public function getOpenInvoiceDataForInvoice(Invoice $invoice): array
@@ -56,7 +62,12 @@ class OpenInvoice
             }
 
             $itemAmountCurrency = $this->chargedCurrency->getInvoiceItemAmountCurrency($invoiceItem);
-            $formFields['lineItems'][] = $this->formatLineItem($itemAmountCurrency, $orderItem, $numberOfItems);
+            $formFields['lineItems'][] = $this->formatLineItem(
+                $itemAmountCurrency,
+                $orderItem,
+                $invoice->getStoreId(),
+                $numberOfItems
+            );
         }
 
         if ($invoice->getShippingAmount() > 0 || $invoice->getShippingTaxAmount() > 0) {
@@ -78,7 +89,7 @@ class OpenInvoice
 
         foreach ($cart->getAllVisibleItems() as $item) {
             $itemAmountCurrency = $this->chargedCurrency->getQuoteItemAmountCurrency($item);
-            $formFields['lineItems'][] = $this->formatLineItem($itemAmountCurrency, $item);
+            $formFields['lineItems'][] = $this->formatLineItem($itemAmountCurrency, $item, $order->getStoreId());
         }
 
         if ($cart->getShippingAddress()->getShippingAmount() > 0) {
@@ -107,6 +118,7 @@ class OpenInvoice
             $formFields['lineItems'][] = $this->formatLineItem(
                 $itemAmountCurrency,
                 $creditmemoItem->getOrderItem(),
+                $creditMemo->getStoreId(),
                 $creditmemoItem->getQty()
             );
         }
@@ -168,7 +180,7 @@ class OpenInvoice
         ];
     }
 
-    protected function formatLineItem(AdyenAmountCurrency $itemAmountCurrency, $item, $qty = null): array
+    protected function formatLineItem(AdyenAmountCurrency $itemAmountCurrency, $item, $storeId, $qty = null): array
     {
         $currency = $itemAmountCurrency->getCurrencyCode();
 
@@ -176,8 +188,15 @@ class OpenInvoice
             $itemAmountCurrency->getAmountWithDiscount(),
             $currency
         );
+
+        $applyTaxAfterDiscount = $this->scopeConfig->isSetFlag(
+            MagentoTaxConfig::CONFIG_XML_PATH_APPLY_AFTER_DISCOUNT,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
         $formattedPriceIncludingTax = $this->adyenHelper->formatAmount(
-            $itemAmountCurrency->getAmountIncludingTaxWithDiscount(),
+            $itemAmountCurrency->getAmountIncludingTaxWithDiscount($applyTaxAfterDiscount),
             $currency
         );
 
@@ -193,7 +212,7 @@ class OpenInvoice
             'taxAmount' => $formattedTaxAmount,
             'description' => $item->getName(),
             'quantity' => (int) ($qty ?? $item->getQty()),
-            'taxPercentage' => $formattedTaxPercentage,
+            // 'taxPercentage' => $formattedTaxPercentage,
             'productUrl' => $product->getUrlModel()->getUrl($product),
             'imageUrl' => $this->getImageUrl($item)
         ];
